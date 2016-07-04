@@ -65,21 +65,13 @@ int find_pattern_index(vector<long> &pattern_memo, int window_size) {
     int pattern_memo_size = pattern_memo.size();
 
     vector<long>::const_iterator first = pattern_memo.begin();
-    vector<long>::const_iterator last  = first + window_size - 1;
+    vector<long>::const_iterator last  = first + window_size;
     vector<long> window(first, last);
     
-    cout << window.size() << " window size";
-    /*
-    for (int i = 0; i < window_size; i++) {
-        cout << window.at(i) << " partial vector";
-    }
-    */
-    
-    cout << endl;
-    for (int i = 0; i < pattern_memo_size - window_size; i++) {
+    for (int i = 1; i < pattern_memo_size - window_size; i++) {
 
         vector<long>::const_iterator first = pattern_memo.begin() + i;
-        vector<long>::const_iterator last  = first + window_size - 1;
+        vector<long>::const_iterator last  = first + window_size;
         vector<long> cur_window(first, last);
 
         if (cur_window == window) {
@@ -111,7 +103,7 @@ int main() {
         vector<int>  moves(first, last);         
 
         long pattern         = 0;
-       // int  save_pattern    = 0;
+     // int  save_pattern    = 0;
         int  cur_pebble_num  = 0;
         int  pattern_dist    = -1;
 
@@ -133,11 +125,14 @@ int main() {
             } else {
                 pattern = (pattern >> 1) | (cur_result << moves.size());
                 pattern_memo.push_back(pattern);
-                cout << pattern << " ";
                 
                 int pattern_memo_size = pattern_memo.size();
-                if ( pattern_memo_size > moves_size )
+
+                cout << pattern << " ";
+
+                if ( pattern_memo_size > moves_size ) {
                     pattern_dist = find_pattern_index(pattern_memo, moves_size);
+                }
 
                 if (pattern_dist != -1) {
                     cout << "pattern distance " << pattern_dist << endl;
@@ -145,14 +140,6 @@ int main() {
                 }
             }
         } 
-
-        cout << endl;
-
-        int pattern_memo_size = pattern_memo.size();
-        /* for (int i = 0; i < pattern_memo_size; i++) { */
-           // cout << pattern_memo[i] << endl;
-            cout << pattern_memo_size << endl;
-        //}
     }
     return 0;
 }

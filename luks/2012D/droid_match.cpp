@@ -32,10 +32,12 @@ int game_result_at(vector<int> &moves, vector<int> &game_memo, int number) {
     
     for (int i = 0; i < move_size; i++) {
         result = 0;
+
         int prev_lookup = number - moves[i];
 
         if (prev_lookup < 0)
             prev_lookup = number - 1;
+        
 
         int prev_result;
 
@@ -45,9 +47,17 @@ int game_result_at(vector<int> &moves, vector<int> &game_memo, int number) {
             std::cerr << "Out of Range error: " << oor.what() << " index is " << prev_lookup << '\n';
         }
 
+
         if ( prev_result == 0) {
             result = 1;
+        cout << " number " << number << " prev_lookup " << prev_lookup << " moves[i] " 
+             << moves[i] << "  game_memo[prev_lookup] " << game_memo[prev_lookup] << " result "<< result<<endl;
             break;
+        } else {
+
+        cout << " number " << number << " prev_lookup " << prev_lookup << " moves[i] " 
+             << moves[i] << "  game_memo[prev_lookup] " << game_memo[prev_lookup] << " result "<< result<<endl;
+
         }
     }
 
@@ -83,9 +93,7 @@ int find_pattern_index(vector<long> &pattern_memo, int window_size) {
 }
 
 
-int main() {
-
-    vector< vector<int> > problems = getProblem();
+void solve(vector< vector<int>> &problems) {
 
     int problems_num = problems.size();
     
@@ -95,7 +103,7 @@ int main() {
         unordered_set<long> pattern_memo_set;
         vector<int>         game_memo;
         vector<int>         oneproblem = problems[i];
-
+        vector<int>         starting_moves;
         vector<int>::const_iterator first = oneproblem.begin() + 1;
         vector<int>::const_iterator last  = first + oneproblem.size() - 1;
 
@@ -103,15 +111,12 @@ int main() {
         vector<int>  moves(first, last);         
 
         long pattern         = 0;
-     // int  save_pattern    = 0;
         int  cur_pebble_num  = 0;
         int  pattern_dist    = -1;
 
         int  pebble_num      = oneproblem[0];
-        int win              = 0;
-        int lost             = 1;
+        int lost              = 0;
     
-        game_memo.push_back(win);
         game_memo.push_back(lost);
 
         while ( cur_pebble_num++ < pebble_num ) {
@@ -119,27 +124,61 @@ int main() {
             int cur_result =  game_result_at( moves, game_memo, cur_pebble_num );
             int moves_size = moves.size();
 
+            cout << cur_pebble_num << " ->  " << cur_result << endl;
             if ( cur_pebble_num <= moves_size) {
-                pattern = pattern | (cur_result << cur_pebble_num);
+
+                pattern = pattern | (cur_result << (cur_pebble_num - 1));
 
             } else {
-                pattern = (pattern >> 1) | (cur_result << moves.size());
-                pattern_memo.push_back(pattern);
-                
-                int pattern_memo_size = pattern_memo.size();
 
-                cout << pattern << " ";
+                pattern = (pattern >> 1) | (cur_result << (moves.size() - 1));
+                pattern_memo.push_back(pattern);
+
+
+                int pattern_memo_size = pattern_memo.size();
 
                 if ( pattern_memo_size > moves_size ) {
                     pattern_dist = find_pattern_index(pattern_memo, moves_size);
                 }
-
-                if (pattern_dist != -1) {
-                    cout << "pattern distance " << pattern_dist << endl;
-                    break;
-                }
             }
-        } 
+        }
+
+        cout << endl;
+        
+        for (int j: moves) {
+            int position = pebble_num - j;
+            int bitmap;
+
+            if (position > pattern_dist)
+                bitmap   = pattern_memo.at(position % pattern_dist);
+            else
+                bitmap   = pattern_memo.at(position);
+            
+            if (bitmap & 1 ) {
+                
+                starting_moves.push_back(j);
+
+            }
+        }
+
+        if (starting_moves.size() == 0) {
+            cout << "lose ";
+        } else {
+            cout << "one of theres: ";
+            for (int j: starting_moves)  {
+                cout << j << " ";
+            }
+        }
+        cout << endl;
     }
+}
+
+
+int main() {
+
+    vector< vector<int> > problems = getProblem();
+
+    solve(problems);
+
     return 0;
 }

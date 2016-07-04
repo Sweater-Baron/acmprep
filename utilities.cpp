@@ -24,3 +24,13 @@ vector< vector<int> > getProblem() {
     return inputVec;
 }
 
+//TODO: check if anything is out of bound
+vector<int> sub_vec(const vector<int> &vec, int begin_index, int end_index) {
+
+    vector<int>::const_iterator first = vec.begin() + begin_index;
+    vector<int>::const_iterator last  = first + end_index;
+
+    vector<int>  new_vec(first, last);         
+
+    return new_vec;
+}

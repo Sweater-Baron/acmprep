@@ -29,7 +29,6 @@ vector< vector<int> > getProblem() {
 int game_result_at(vector<int> &moves, vector<int> &game_memo, int number) {
     int result;
     int move_size = moves.size();
-    //int game_memo_size = game_memo.size();
     
     for (int i = 0; i < move_size; i++) {
         result = 0;
@@ -62,17 +61,33 @@ int game_result_at(vector<int> &moves, vector<int> &game_memo, int number) {
 }
 
 
-int find_pattern_index(vector<long> &pattern_memo, long pattern) {
-    int index = -1;
-
+int find_pattern_index(vector<long> &pattern_memo, int window_size) {
     int pattern_memo_size = pattern_memo.size();
-    for (int i = 0; i < pattern_memo_size; i++) {
-        if ( pattern_memo[i] == pattern ) {
-            index = i;
+
+    vector<long>::const_iterator first = pattern_memo.begin();
+    vector<long>::const_iterator last  = first + window_size - 1;
+    vector<long> window(first, last);
+    
+    cout << window.size() << " window size";
+    /*
+    for (int i = 0; i < window_size; i++) {
+        cout << window.at(i) << " partial vector";
+    }
+    */
+    
+    cout << endl;
+    for (int i = 0; i < pattern_memo_size - window_size; i++) {
+
+        vector<long>::const_iterator first = pattern_memo.begin() + i;
+        vector<long>::const_iterator last  = first + window_size - 1;
+        vector<long> cur_window(first, last);
+
+        if (cur_window == window) {
+            return i;
         }
     }
 
-    return index;
+    return -1;
 }
 
 
@@ -96,9 +111,9 @@ int main() {
         vector<int>  moves(first, last);         
 
         long pattern         = 0;
-        //int  save_pattern    = 0;
+       // int  save_pattern    = 0;
         int  cur_pebble_num  = 0;
-        //int  pattern_dist    = 0;
+        int  pattern_dist    = -1;
 
         int  pebble_num      = oneproblem[0];
         int win              = 0;
@@ -108,37 +123,36 @@ int main() {
         game_memo.push_back(lost);
 
         while ( cur_pebble_num++ < pebble_num ) {
+
             int cur_result =  game_result_at( moves, game_memo, cur_pebble_num );
             int moves_size = moves.size();
-            cout << cur_result << " ";
-            if ( cur_pebble_num <= moves_size) {
 
-                pattern = pattern | (cur_result >> cur_pebble_num);
-                /*
-                int number = 1 >> 4;
-                cout << number << " ";
-                */
+            if ( cur_pebble_num <= moves_size) {
+                pattern = pattern | (cur_result << cur_pebble_num);
 
             } else {
-                pattern = (pattern << 1) | (cur_result >> moves.size());
-                /*
-                
+                pattern = (pattern >> 1) | (cur_result << moves.size());
                 pattern_memo.push_back(pattern);
-                pattern_memo_set.insert(pattern);
+                cout << pattern << " ";
+                
+                int pattern_memo_size = pattern_memo.size();
+                if ( pattern_memo_size > moves_size )
+                    pattern_dist = find_pattern_index(pattern_memo, moves_size);
 
-                if ( pattern_memo_set.find(pattern) != pattern_memo_set.end() ) {
-                    pattern_dist = ( cur_pebble_num - find_pattern_index(pattern_memo, pattern) );
+                if (pattern_dist != -1) {
+                    cout << "pattern distance " << pattern_dist << endl;
                     break;
                 }
-                */
-
             }
         } 
+
         cout << endl;
+
         int pattern_memo_size = pattern_memo.size();
-        for (int i = 0; i < pattern_memo_size; i++) {
-            cout << pattern_memo[i] << endl;
-        }
+        /* for (int i = 0; i < pattern_memo_size; i++) { */
+           // cout << pattern_memo[i] << endl;
+            cout << pattern_memo_size << endl;
+        //}
     }
     return 0;
 }

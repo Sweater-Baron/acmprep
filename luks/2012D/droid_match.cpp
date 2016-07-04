@@ -32,9 +32,7 @@ int game_result_at(vector<int> &moves, vector<int> &game_memo, int number) {
     int move_size = moves.size();
 
     for (int i = 0; i < move_size; i++) {
-
         result = 0;
-
         int prev_lookup = number - moves[i];
 
         if (prev_lookup < 0)
@@ -105,9 +103,11 @@ int main() {
             int moves_size = moves.size();
             if ( cur_pebble_num <= moves_size) {
 
+                /*
                 pattern = pattern | (cur_result >> cur_pebble_num);
                 int number = 1 >> 4;
                 cout << number << " ";
+                */
 
             } else {
                 pattern = (pattern << 1) | (cur_result >> moves.size());

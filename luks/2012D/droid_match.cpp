@@ -50,14 +50,7 @@ int game_result_at(vector<int> &moves, vector<int> &game_memo, int number) {
 
         if ( prev_result == 0) {
             result = 1;
-        cout << " number " << number << " prev_lookup " << prev_lookup << " moves[i] " 
-             << moves[i] << "  game_memo[prev_lookup] " << game_memo[prev_lookup] << " result "<< result<<endl;
             break;
-        } else {
-
-        cout << " number " << number << " prev_lookup " << prev_lookup << " moves[i] " 
-             << moves[i] << "  game_memo[prev_lookup] " << game_memo[prev_lookup] << " result "<< result<<endl;
-
         }
     }
 
@@ -123,18 +116,19 @@ void solve(vector< vector<int>> &problems) {
 
             int cur_result =  game_result_at( moves, game_memo, cur_pebble_num );
             int moves_size = moves.size();
+            //cout << cur_result << " ";
 
-            cout << cur_pebble_num << " ->  " << cur_result << endl;
-            if ( cur_pebble_num <= moves_size) {
+            if ( cur_pebble_num < moves_size) {
 
-                pattern = pattern | (cur_result << (cur_pebble_num - 1));
+                pattern = pattern | (cur_result << (moves_size  - 1 - cur_pebble_num));
+
+                //cout << pattern << " ";
 
             } else {
-
-                pattern = (pattern >> 1) | (cur_result << (moves.size() - 1));
                 pattern_memo.push_back(pattern);
 
-
+                //pattern = (pattern >> 1) | (cur_result << (moves.size() - 1));
+                pattern = (((pattern | (1 << (moves_size - 1))) ^ (1 << (moves_size - 1))) << 1) | cur_result; 
                 int pattern_memo_size = pattern_memo.size();
 
                 if ( pattern_memo_size > moves_size ) {
@@ -144,21 +138,27 @@ void solve(vector< vector<int>> &problems) {
         }
 
         cout << endl;
+
+        for (int k: pattern_memo) {
+           cout << k << " ";
+        }
         
+        cout << endl;
+
         for (int j: moves) {
             int position = pebble_num - j;
             int bitmap;
 
-            if (position > pattern_dist)
+            if (position < pattern_dist)
                 bitmap   = pattern_memo.at(position % pattern_dist);
             else
-                bitmap   = pattern_memo.at(position);
+                bitmap   = game_memo.at(position);
             
-            if (bitmap & 1 ) {
-                
+            //cout << position << " " << " bitmap " << bitmap << endl;
+            if ( !(bitmap & (1 << (moves.size() - 1)))) {
                 starting_moves.push_back(j);
-
             }
+
         }
 
         if (starting_moves.size() == 0) {

@@ -2,6 +2,7 @@
 #include <algorithm>
 
 int main() {
+
     int cents        = 10000 + 1;
     int menu_size    = 4;
     int price_s[4]   = {139, 439, 899, 627};
@@ -27,7 +28,6 @@ int main() {
 
     for (int i = 1; i < cents; i++) {
         int max_cal = 0;
-
         for (int k = 0; k < menu_size; k++) {
             if ( (i - price[k] >= 0) && ((T[i - price[k]] > 0) || (i - price[k]) == 0) ) {
 

@@ -27,9 +27,11 @@ int main() {
     std::cout <<  std::endl;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            std::cout << << std::endl;
+            std::cout << schedule[i][j]; 
         }
+        std::cout << std::endl;
     }
+
     return 0;
 }
 
